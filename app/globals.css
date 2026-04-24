@@ -911,6 +911,15 @@ body {
 .audio-btn svg { flex-shrink: 0; }
 .audio-btn-label { line-height: 1; }
 .audio-btn-loading { opacity: 0.4; cursor: wait; }
+.audio-btn-pulse {
+  border-color: rgba(247,240,222,0.55);
+  color: #f7f0de;
+  animation: audio-pulse 2s ease-in-out infinite;
+}
+@keyframes audio-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217,193,153,0.35); }
+  50%       { box-shadow: 0 0 0 8px rgba(217,193,153,0); }
+}
 
 .admin-home-badge {
   position: fixed;

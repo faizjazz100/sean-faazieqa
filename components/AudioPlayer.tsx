@@ -13,7 +13,8 @@ const VIDEO_ID = 'FoCG-WNsZio'
 
 export default function AudioPlayer() {
   const playerRef = useRef<any>(null)
-  const [muted, setMuted] = useState(true)
+  const [muted, setMuted] = useState(false)
+  const [playing, setPlaying] = useState(false)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function AudioPlayer() {
         videoId: VIDEO_ID,
         playerVars: {
           autoplay: 1,
-          mute: 1,
+          mute: 0,
           loop: 1,
           playlist: VIDEO_ID,
           controls: 0,
@@ -31,7 +32,14 @@ export default function AudioPlayer() {
           disablekb: 1,
         },
         events: {
-          onReady: () => setReady(true),
+          onReady: (e: any) => {
+            e.target.setVolume(40)
+            setReady(true)
+          },
+          onStateChange: (e: any) => {
+            // 1 = playing, anything else = not playing
+            setPlaying(e.data === 1)
+          },
         },
       })
     }
@@ -48,12 +56,20 @@ export default function AudioPlayer() {
     }
   }, [])
 
-  function toggleMute() {
+  function handleClick() {
     const player = playerRef.current
     if (!player) return
-    if (muted) {
+
+    if (!playing) {
       player.unMute()
       player.setVolume(40)
+      player.playVideo()
+      setMuted(false)
+      return
+    }
+
+    if (muted) {
+      player.unMute()
       setMuted(false)
     } else {
       player.mute()
@@ -63,19 +79,24 @@ export default function AudioPlayer() {
 
   return (
     <>
-      {/* Hidden YouTube player */}
       <div style={{ position: 'fixed', top: -9999, left: -9999, width: 1, height: 1, pointerEvents: 'none' }}>
         <div id="yt-player" />
       </div>
 
-      {/* Mute/unmute button */}
       <button
-        onClick={toggleMute}
-        className={`audio-btn${!ready ? ' audio-btn-loading' : ''}`}
+        onClick={handleClick}
+        className={`audio-btn${!ready ? ' audio-btn-loading' : ''}${!playing && ready ? ' audio-btn-pulse' : ''}`}
         disabled={!ready}
-        aria-label={muted ? 'Unmute music' : 'Mute music'}
+        aria-label={!playing ? 'Play music' : muted ? 'Unmute' : 'Mute music'}
       >
-        {muted ? (
+        {!playing ? (
+          <>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            <span className="audio-btn-label">Play Music</span>
+          </>
+        ) : muted ? (
           <>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
