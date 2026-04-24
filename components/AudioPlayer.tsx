@@ -2,84 +2,99 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+
+const VIDEO_ID = 'FoCG-WNsZio'
+
 export default function AudioPlayer() {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [started, setStarted] = useState(false)
-  const [muted, setMuted] = useState(false)
+  const playerRef = useRef<any>(null)
+  const [muted, setMuted] = useState(true)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const audio = new Audio('/music/background.mp3')
-    audio.loop = true
-    audio.volume = 0.35
-    audioRef.current = audio
+    function initPlayer() {
+      playerRef.current = new window.YT.Player('yt-player', {
+        videoId: VIDEO_ID,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          loop: 1,
+          playlist: VIDEO_ID,
+          controls: 0,
+          rel: 0,
+          iv_load_policy: 3,
+          disablekb: 1,
+        },
+        events: {
+          onReady: () => setReady(true),
+        },
+      })
+    }
 
-    // Try autoplay immediately
-    audio.play().then(() => {
-      setStarted(true)
-    }).catch(() => {
-      // Browser blocked autoplay — start on first user interaction
-      const unlock = () => {
-        audio.play().then(() => {
-          setStarted(true)
-        }).catch(() => {})
-        document.removeEventListener('click', unlock)
-        document.removeEventListener('touchstart', unlock)
-        document.removeEventListener('keydown', unlock)
-        document.removeEventListener('scroll', unlock)
+    if (window.YT && window.YT.Player) {
+      initPlayer()
+    } else {
+      window.onYouTubeIframeAPIReady = initPlayer
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const tag = document.createElement('script')
+        tag.src = 'https://www.youtube.com/iframe_api'
+        document.head.appendChild(tag)
       }
-      document.addEventListener('click', unlock, { once: true })
-      document.addEventListener('touchstart', unlock, { once: true })
-      document.addEventListener('keydown', unlock, { once: true })
-      document.addEventListener('scroll', unlock, { once: true })
-    })
-
-    return () => {
-      audio.pause()
-      audio.src = ''
     }
   }, [])
 
-  function handleClick() {
-    const audio = audioRef.current
-    if (!audio) return
-
-    if (!started) {
-      audio.play().then(() => setStarted(true)).catch(() => {})
-      return
+  function toggleMute() {
+    const player = playerRef.current
+    if (!player) return
+    if (muted) {
+      player.unMute()
+      player.setVolume(40)
+      setMuted(false)
+    } else {
+      player.mute()
+      setMuted(true)
     }
-
-    audio.muted = !audio.muted
-    setMuted(audio.muted)
   }
 
   return (
-    <button
-      onClick={handleClick}
-      className="audio-btn"
-      aria-label={!started ? 'Play music' : muted ? 'Unmute music' : 'Mute music'}
-    >
-      {!started ? (
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
-        </svg>
-      ) : muted ? (
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <line x1="23" y1="9" x2="17" y2="15" />
-          <line x1="17" y1="9" x2="23" y2="15" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-        </svg>
-      )}
-      <span className="audio-btn-label">
-        {!started ? 'Music' : muted ? 'Unmute' : 'Music'}
-      </span>
-    </button>
+    <>
+      {/* Hidden YouTube player */}
+      <div style={{ position: 'fixed', top: -9999, left: -9999, width: 1, height: 1, pointerEvents: 'none' }}>
+        <div id="yt-player" />
+      </div>
+
+      {/* Mute/unmute button */}
+      <button
+        onClick={toggleMute}
+        className={`audio-btn${!ready ? ' audio-btn-loading' : ''}`}
+        disabled={!ready}
+        aria-label={muted ? 'Unmute music' : 'Mute music'}
+      >
+        {muted ? (
+          <>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+            <span className="audio-btn-label">Unmute</span>
+          </>
+        ) : (
+          <>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+            </svg>
+            <span className="audio-btn-label">Music</span>
+          </>
+        )}
+      </button>
+    </>
   )
 }

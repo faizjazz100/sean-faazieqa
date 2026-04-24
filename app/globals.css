@@ -910,6 +910,7 @@ body {
 }
 .audio-btn svg { flex-shrink: 0; }
 .audio-btn-label { line-height: 1; }
+.audio-btn-loading { opacity: 0.4; cursor: wait; }
 
 .admin-home-badge {
   position: fixed;
