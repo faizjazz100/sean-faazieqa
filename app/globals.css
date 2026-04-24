@@ -881,6 +881,36 @@ body {
 }
 .back-link:hover { text-decoration: underline; }
 
+/* ── Audio player ── */
+.audio-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--f-sans);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247,240,222,0.75);
+  border: 1px solid rgba(247,240,222,0.25);
+  padding: 7px 14px 7px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  background: rgba(26,20,16,0.45);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.audio-btn:hover {
+  color: #f7f0de;
+  border-color: rgba(247,240,222,0.55);
+  background: rgba(26,20,16,0.65);
+}
+.audio-btn svg { flex-shrink: 0; }
+.audio-btn-label { line-height: 1; }
+
 .admin-home-badge {
   position: fixed;
   top: 16px;

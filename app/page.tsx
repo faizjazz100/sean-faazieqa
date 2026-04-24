@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import Countdown from '@/components/Countdown'
+import AudioPlayer from '@/components/AudioPlayer'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const DEFAULT_EVENTS = [
@@ -34,6 +35,8 @@ export default async function HomePage() {
           Admin
         </Link>
       )}
+
+      <AudioPlayer />
 
       {/* ─── HERO ─── */}
       <section className="hero">
