@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { cookies } from 'next/headers'
 import Countdown from '@/components/Countdown'
 import AudioPlayer from '@/components/AudioPlayer'
+import RevealOnScroll from '@/components/RevealOnScroll'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const DEFAULT_EVENTS = [
@@ -41,6 +42,10 @@ export default async function HomePage() {
       {/* ─── HERO ─── */}
       <section className="hero">
         <div className="hero-img" />
+        <div className="hero-couple">
+          <img src="/couple.png" alt="" aria-hidden="true" />
+        </div>
+
         <div className="hero-inner">
           <div className="hero-top">
             <div className="monogram">
@@ -49,30 +54,22 @@ export default async function HomePage() {
             <div className="hairline" />
           </div>
 
-          <div className="hero-center">
-            <div className="eyebrow">Save the Date</div>
+          <div className="hero-text-block">
+            <div className="eyebrow">The Wedding of</div>
             <h1 className="hero-names">
               Sean
               <span className="and">&amp;</span>
               Faazieqa
             </h1>
-            <div className="hero-sub">are getting married</div>
-          </div>
-
-          <div className="hero-meta">
-            <span>26 &middot; 09 &middot; 26</span>
-            <span>Brunei</span>
+            <div className="hero-meta">
+              <span>26 &middot; 09 &middot; 26</span>
+              <span>Mawaddah Hall, Setia Point Mall</span>
+            </div>
           </div>
         </div>
 
         <div className="hero-meta-center">
-          <span
-            style={{
-              fontFamily: 'var(--f-sans)',
-              fontSize: '9px',
-              letterSpacing: '0.5em',
-            }}
-          >
+          <span style={{ fontFamily: 'var(--f-sans)', fontSize: '9px', letterSpacing: '0.5em' }}>
             Scroll
           </span>
           <div className="scroll-dot" />
@@ -171,34 +168,19 @@ export default async function HomePage() {
 
       {/* ─── DRESS CODE ─── */}
       <section className="dresscode">
-        <div className="sect-label dc-label">A Gentle Note</div>
-        <h2 className="sect-title dc-title">Dress Code</h2>
-        <div className="sect-sub dc-sub">Semi-formal &middot; Cocktail attire</div>
-
-        <div className="palette">
-          {[
-            { name: 'Ivory', color: '#f3ecd8' },
-            { name: 'Champagne', color: '#d9c199' },
-            { name: 'Sage', color: '#8a9775' },
-            { name: 'Burgundy', color: '#5a0f1f' },
-            { name: 'Forest', color: '#223118' },
-            { name: 'Ink', color: '#1a1410' },
-          ].map(({ name, color }) => (
-            <div
-              key={name}
-              className="swatch"
-              data-name={name}
-              style={{ background: color }}
-            />
-          ))}
+        <div className="dc-bg" />
+        <RevealOnScroll className="dc-figure">
+          <img src="/dresscode_figure.png" alt="" aria-hidden="true" />
+        </RevealOnScroll>
+        <div className="dc-content">
+          <div className="sect-label dc-label">A Gentle Note</div>
+          <h2 className="dc-title">Dress Code</h2>
+          <div className="dc-rule" />
+          <div className="dc-sub">Strictly Smart / Semi-Formal</div>
+          <p className="dc-copy">
+            Please help us set the mood for the event. We humbly request our guests come in their best.
+          </p>
         </div>
-
-        <p className="dc-copy">
-          We warmly invite you to dress in tones from our colour palette. Long
-          gowns, tailored suits, traditional attire. Whatever feels most
-          like you. Kindly avoid white and ivory; these are reserved for the bride.
-        </p>
-        <div className="dc-note">With love &middot; With elegance</div>
       </section>
 
       {/* ─── RSVP CTA ─── */}
