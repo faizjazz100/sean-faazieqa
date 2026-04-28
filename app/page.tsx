@@ -67,13 +67,6 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-
-        <div className="hero-meta-center">
-          <span style={{ fontFamily: 'var(--f-sans)', fontSize: '9px', letterSpacing: '0.5em' }}>
-            Scroll
-          </span>
-          <div className="scroll-dot" />
-        </div>
       </section>
 
       {/* ─── INVITATION ─── */}
